@@ -9,10 +9,10 @@
 import csv
 import json
 from contextlib import closing
-from httplib import CannotSendRequest, HTTPConnection
+from http.client import CannotSendRequest, HTTPConnection
 from _socket import error
-from urllib import quote
-from urllib2 import URLError
+import urllib.parse
+from urllib.error import URLError
 
 def getConnection():
     '''
@@ -32,7 +32,7 @@ def webserviceResult(conn, wsEndpoint, temperature):
     on error
     '''
     try:
-        conn.putrequest('GET', '%s%s/' % (wsEndpoint, quote(temperature)))
+        conn.putrequest('GET', '%s%s/' % (wsEndpoint, urllib.parse.quote(temperature)))
         conn.endheaders()
         resp = conn.getresponse()
         if resp.status == 200:
@@ -69,12 +69,12 @@ def displayTemps(temperatureScale, jsonString):
     web service. Necessary to help us determine which of the optional fields
     in the json object we need to unpack
     @param jsonString: Binary response from web service that will be
-    converted to a json object 
+    converted to a json object
     @return: A formatted string for display on standard output
     '''
     temps = json.loads(jsonString)
     if temperatureScale.upper()[0] == 'K':
-        return '%.2f\t\t-\t\t%.2f\t\t%.2f' % (temps['fahrenheit'], temps['celsius'], 
+        return '%.2f\t\t-\t\t%.2f\t\t%.2f' % (temps['fahrenheit'], temps['celsius'],
                                                   temps['rankine'],)
     elif temperatureScale.upper()[0] == 'F':
         return '\t-\t\t%.2f\t\t%.2f\t\t%.2f' % (temps['kelvin'], temps['celsius'],
@@ -96,27 +96,27 @@ def readDataFile():
             reader = csv.reader(fPtr)
             for line in reader:
                 yield line
-    except IOError, ioError:
-        raise ioError
+    except (OSError):
+        raise OSError
 
 def main():
     '''
     Read the test data, and trigger the web service computation that will convert
     the specified temperature and scale to the other three temperature scales.
     '''
-    print 'Input\t\tFahrenheit\tKelvin\t\tCelsius\t\tRankine\r\n',
+    print ('Input\t\tFahrenheit\tKelvin\t\tCelsius\t\tRankine\r\n')
     try:
         for scale, degrees in readDataFile():
             with closing(getConnection()) as connection:
                 try:
-                    print "%-12s %s" % (degrees, displayTemps(scale,
+                    print ("%-12s %s" % (degrees, displayTemps(scale,
                                             webserviceResult(connection,
                                                             endpoint(scale),
-                                                            degrees)))
+                                                            degrees))))
                 except URLError:
-                    print degrees, '\t\tX\t\tX\t\tX\t\tX'
+                    print (degrees, '\t\tX\t\tX\t\tX\t\tX')
     except IOError:
-        print 'Missing or corrupt test data file'
+        print ('Missing or corrupt test data file')
 
 if __name__ == '__main__':
     main()
