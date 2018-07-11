@@ -27,7 +27,7 @@ class KelvinConversionHandler(web.RequestHandler):
         F = Converters.ConvertKelvinToFahrenheit(temperature)
         C = Converters.ConvertKelvinToCelcius(temperature)
         R = Converters.ConvertKelvinToRankine(temperature)
-
+	
         self.write(json.dumps({"fahrenheit":F,"celsius":C,"rankine":R}))
 
 class FahrenheitConversionHandler(web.RequestHandler):
@@ -51,8 +51,7 @@ class RankineConversionHandler(web.RequestHandler):
         K = Converters.ConvertRankineToKelvin(temperature)
         F = Converters.ConvertKelvinToFahrenheit(K)
         C = Converters.ConvertKelvinToCelcius(K)
-        print("rankine")
-
+	
         self.write(json.dumps({"fahrenheit":F,"kelvin":K,"celsius":C}))
 
 def make_app():
