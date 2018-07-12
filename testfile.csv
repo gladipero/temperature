@@ -1,5 +1,13 @@
-Kelvin,0
-Celcius,0
+Kelvin,1
+Celcius,-100.2
+Kelvin,100.2
+rankine,0.1
+fahrenheit,100.5
+Kelvin,0.1
 Kelvin,100
-rankine,0
-fahrenheit,100
+Kelvin,-100
+Kelvin,0
+Celcius,0.1
+Celcius,100.1
+Celcius,100
+Celcius,-100
